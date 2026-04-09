@@ -55,7 +55,14 @@ class FeedbackManager:
 
     def get_feedback_stats(self):
         conn = sqlite3.connect(self.db_path)
-        df = pd.read_sql_query("SELECT * FROM feedback", conn)
+
+        try:
+            df = pd.read_sql_query("SELECT * FROM feedback", conn)
+        except:
+            df = pd.DataFrame(columns=[
+                'rating', 'usability_score', 'feature_satisfaction'
+            ])
+
         conn.close()
 
         if df.empty:
@@ -67,9 +74,9 @@ class FeedbackManager:
             }
 
         return {
-            'avg_rating': df['rating'].mean(),
-            'avg_usability': df['usability_score'].mean(),
-            'avg_satisfaction': df['feature_satisfaction'].mean(),
+            'avg_rating': float(df['rating'].mean()),
+            'avg_usability': float(df['usability_score'].mean()),
+            'avg_satisfaction': float(df['feature_satisfaction'].mean()),
             'total_responses': len(df)
         }
 
@@ -77,7 +84,7 @@ class FeedbackManager:
         st.markdown("""
             <style>
             @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
-            
+
             .feedback-container {
                 background: rgba(255, 255, 255, 0.05);
                 backdrop-filter: blur(10px);
@@ -87,7 +94,7 @@ class FeedbackManager:
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             }
-            
+
             .feedback-header {
                 color: #E0E0E0;
                 font-size: 1.5em;
@@ -97,53 +104,40 @@ class FeedbackManager:
                 padding: 15px;
                 background: linear-gradient(135deg, #4CAF50, #2196F3);
                 border-radius: 12px;
-                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
             }
-            
+
             .feedback-section {
                 margin: 20px 0;
                 padding: 20px;
                 border-radius: 15px;
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
-            
-            .feedback-section:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            }
-            
+
             .feedback-label {
                 color: #E0E0E0;
                 font-size: 1.1em;
-                font-weight: 500;
-                margin-bottom: 10px;
             }
-            
+
             .rating-container {
                 display: flex;
-                align-items: center;
                 gap: 10px;
                 margin: 15px 0;
             }
             </style>
-            """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
         st.markdown('<div class="feedback-container">', unsafe_allow_html=True)
         st.markdown('<h2 class="feedback-header">📝 Share Your Feedback</h2>', unsafe_allow_html=True)
 
-        rating = st.slider("Overall Rating", 1, 5, 5, label_visibility="collapsed")
-        usability_score = st.slider("Usability Score", 1, 5, 5, label_visibility="collapsed")
-        feature_satisfaction = st.slider("Feature Satisfaction", 1, 5, 5, label_visibility="collapsed")
+        rating = st.slider("Overall Rating", 1, 5, 5)
+        usability_score = st.slider("Usability Score", 1, 5, 5)
+        feature_satisfaction = st.slider("Feature Satisfaction", 1, 5, 5)
 
-        missing_features = st.text_area("Missing Features", label_visibility="collapsed")
-        improvement_suggestions = st.text_area("Improvement Suggestions", label_visibility="collapsed")
-        user_experience = st.text_area("User Experience", label_visibility="collapsed")
+        missing_features = st.text_area("Missing Features")
+        improvement_suggestions = st.text_area("Improvement Suggestions")
+        user_experience = st.text_area("User Experience")
 
-        if st.button("Submit Feedback", key="submit_feedback"):
+        if st.button("Submit Feedback"):
             progress_bar = st.progress(0)
-            status_text = st.empty()
 
             for i in range(100):
                 progress_bar.progress(i + 1)
@@ -161,7 +155,6 @@ class FeedbackManager:
             self.save_feedback(feedback_data)
 
             progress_bar.empty()
-            status_text.empty()
 
             st.success("🎉 Feedback submitted successfully!")
             st.balloons()
