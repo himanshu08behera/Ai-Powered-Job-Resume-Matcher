@@ -1,17 +1,6 @@
 import streamlit as st
 import sqlite3
 from datetime import datetime
-import pandas as pd
-import time
-import os
-class FeedbackManager:
-    def __init__(self):
-        self.db_path = "/tmp/feedback.db"
-        self.setup_database()
-
-import sqlite3
-
-import sqlite3
 
 class FeedbackManager:
     def __init__(self):
@@ -26,13 +15,52 @@ class FeedbackManager:
             c.execute("""
             CREATE TABLE IF NOT EXISTS feedback (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                feedback TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                rating INTEGER,
+                usability_score INTEGER,
+                feature_satisfaction INTEGER,
+                missing_features TEXT,
+                improvement_suggestions TEXT,
+                user_experience TEXT,
+                timestamp TIMESTAMP
             )
             """)
 
             conn.commit()
             conn.close()
+
+        except Exception as e:
+            print("DB ERROR:", e)
+            raise e
+
+    def save_feedback(self, feedback_data):
+        conn = sqlite3.connect(self.db_path)
+        c = conn.cursor()
+
+        rating = feedback_data.get('rating', 0)
+        usability_score = feedback_data.get('usability_score', 0)
+        feature_satisfaction = feedback_data.get('feature_satisfaction', 0)
+        missing_features = feedback_data.get('missing_features', '')
+        improvement_suggestions = feedback_data.get('improvement_suggestions', '')
+        user_experience = feedback_data.get('user_experience', '')
+
+        c.execute("""
+        INSERT INTO feedback (
+            rating, usability_score, feature_satisfaction,
+            missing_features, improvement_suggestions,
+            user_experience, timestamp
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            rating,
+            usability_score,
+            feature_satisfaction,
+            missing_features,
+            improvement_suggestions,
+            user_experience,
+            datetime.now()
+        ))
+
+        conn.commit()
+        conn.close()
 
         except Exception as e:
             print("DB ERROR:", e)
