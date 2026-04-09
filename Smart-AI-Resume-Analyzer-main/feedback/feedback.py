@@ -1,10 +1,10 @@
-print("LOADING FEEDBACK MODULE")
+
 import streamlit as st
 import sqlite3
 import time
 import pandas as pd
 from datetime import datetime
-from feedback.feedback import FeedbackManager
+
 
 
 class FeedbackManager:
