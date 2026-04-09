@@ -8,29 +8,24 @@ class FeedbackManager:
         self.setup_database()
 
     def setup_database(self):
-        try:
-            conn = sqlite3.connect(self.db_path)
-            c = conn.cursor()
+        conn = sqlite3.connect(self.db_path)
+        c = conn.cursor()
 
-            c.execute("""
-            CREATE TABLE IF NOT EXISTS feedback (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                rating INTEGER,
-                usability_score INTEGER,
-                feature_satisfaction INTEGER,
-                missing_features TEXT,
-                improvement_suggestions TEXT,
-                user_experience TEXT,
-                timestamp TIMESTAMP
-            )
-            """)
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            rating INTEGER,
+            usability_score INTEGER,
+            feature_satisfaction INTEGER,
+            missing_features TEXT,
+            improvement_suggestions TEXT,
+            user_experience TEXT,
+            timestamp TIMESTAMP
+        )
+        """)
 
-            conn.commit()
-            conn.close()
-
-        except Exception as e:
-            print("DB ERROR:", e)
-            raise e
+        conn.commit()
+        conn.close()
 
     def save_feedback(self, feedback_data):
         conn = sqlite3.connect(self.db_path)
@@ -61,41 +56,6 @@ class FeedbackManager:
 
         conn.commit()
         conn.close()
-
-        except Exception as e:
-            print("DB ERROR:", e)
-            raise e
-
-    def save_feedback(self, feedback_data):
-      conn = sqlite3.connect(self.db_path)
-    c = conn.cursor()
-
-    # ✅ ADD THIS PART HERE (before INSERT)
-    rating = feedback_data.get('rating', 0)
-    usability_score = feedback_data.get('usability_score', 0)
-    feature_satisfaction = feedback_data.get('feature_satisfaction', 0)
-    missing_features = feedback_data.get('missing_features', '')
-    improvement_suggestions = feedback_data.get('improvement_suggestions', '')
-    user_experience = feedback_data.get('user_experience', '')
-
-    # ✅ NOW your INSERT query
-c.execute('''
-    INSERT INTO feedback (
-        rating, usability_score, feature_satisfaction,
-        missing_features, improvement_suggestions,
-        user_experience, timestamp
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
-''', (
-    feedback_data['rating'],
-    feedback_data['usability_score'],
-    feedback_data['feature_satisfaction'],
-    feedback_data['missing_features'],
-    feedback_data['improvement_suggestions'],
-    feedback_data['user_experience'],
-    datetime.now()
-))
-conn.commit()
-conn.close()
 
 def get_feedback_stats(self):
         """Get feedback statistics"""
