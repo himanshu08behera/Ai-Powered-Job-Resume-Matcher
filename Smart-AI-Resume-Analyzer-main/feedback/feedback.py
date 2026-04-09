@@ -1,3 +1,4 @@
+print("LOADING FEEDBACK MODULE")
 import streamlit as st
 import sqlite3
 import time
@@ -80,6 +81,7 @@ class FeedbackManager:
         }
 
     def render_feedback_form(self):
+        print("FUNCTION CALLED")
         st.markdown("### 📝 Share Your Feedback")
 
         rating = st.slider("Rating", 1, 5, 5)
