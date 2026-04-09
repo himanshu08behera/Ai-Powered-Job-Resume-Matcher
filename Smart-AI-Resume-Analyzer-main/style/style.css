@@ -1594,3 +1594,153 @@ h1 {
 .feedback-container::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #45a049, #1e88e5);
 }
+/* =========================
+   FINAL UI UPGRADE (PASTE BELOW ALL)
+   ========================= */
+
+/* Smooth UI */
+* {
+    transition: all 0.25s ease;
+}
+
+/* HERO SECTION (MAIN BANNER) */
+.hero-header {
+    position: relative;
+    padding: 3rem 2rem;
+    margin-bottom: 2rem;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(0,180,219,0.25), rgba(0,131,176,0.15));
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+    overflow: hidden;
+}
+
+.hero-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(0,180,219,0.4), transparent 60%);
+    opacity: 0.6;
+}
+
+.hero-header .header-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #00B4DB;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 15px rgba(0,180,219,0.3);
+}
+
+.hero-header .header-subtitle {
+    font-size: 1.3rem;
+    color: #cfd8dc;
+    max-width: 700px;
+}
+
+/* SIDEBAR BUTTON UPGRADE */
+.stButton > button {
+    width: 100%;
+    justify-content: flex-start;
+    border-radius: 10px;
+}
+
+/* Active + Hover */
+.stButton > button:hover,
+.stButton > button:focus,
+.stButton > button:active {
+    background: linear-gradient(135deg, #00B4DB, #0083B0);
+    transform: translateX(6px);
+    box-shadow: 0 0 15px rgba(0,180,219,0.5);
+}
+
+/* CARD DESIGN (GLASS + MODERN) */
+.stCard {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 1.8rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.3s ease;
+}
+
+.stCard:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 10px 30px rgba(0,180,219,0.25);
+    border-color: rgba(0,180,219,0.4);
+}
+
+/* FEATURE CARD */
+.feature-card {
+    background: linear-gradient(135deg, rgba(0,180,219,0.08), rgba(0,131,176,0.05));
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,180,219,0.2);
+}
+
+/* INPUT FIELD IMPROVEMENT */
+.stTextInput > div > div,
+div[data-baseweb="input"] {
+    background: rgba(255,255,255,0.04) !important;
+    border-radius: 10px !important;
+}
+
+div[data-baseweb="input"]:focus-within {
+    border-color: #00B4DB !important;
+    box-shadow: 0 0 10px rgba(0,180,219,0.4) !important;
+}
+
+/* BUTTON PREMIUM LOOK */
+.stButton > button {
+    background: linear-gradient(135deg, #00B4DB, #0083B0);
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,180,219,0.4);
+}
+
+/* HEADER TEXT ENHANCEMENT */
+h1, h2 {
+    text-shadow: 0 2px 12px rgba(0,180,219,0.25);
+}
+
+/* SCROLLBAR MODERN */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #00B4DB, #0083B0);
+}
+
+/* LIGHT GLOW BACKGROUND EFFECT */
+body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(circle, rgba(0,180,219,0.08), transparent 70%);
+    z-index: -1;
+}
+
+/* SMALL ANIMATION */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main {
+    animation: fadeUp 0.5s ease;
+}
