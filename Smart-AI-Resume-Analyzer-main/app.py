@@ -39,7 +39,7 @@ import datetime
 
 # Set page config at the very beginning
 st.set_page_config(
-    page_title="Smart Resume AI",
+    page_title="Ai-Powered Smart Resume Analyzer And Job Matcher",
     page_icon="🚀",
     layout="wide"
 )
