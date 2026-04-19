@@ -2858,5 +2858,47 @@ class ResumeApp:
 
 
 if __name__ == "__main__":
-    app = ResumeApp()
-    app.main()
+    # ================= LOGIN SYSTEM =================
+from config.auth_db import init_user_db, add_user, verify_user
+import streamlit as st
+
+init_user_db()
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+
+if not st.session_state.logged_in:
+    st.title("🔐 Smart Resume AI")
+
+    option = st.radio("Select Option", ["Sign In", "Sign Up"])
+
+    if option == "Sign Up":
+        name = st.text_input("Name")
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+
+        if st.button("Create Account"):
+            if add_user(name, email, password):
+                st.success("Account created! Now login.")
+            else:
+                st.error("User already exists")
+
+    else:
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+
+        if st.button("Login"):
+            if verify_user(email, password):
+                st.session_state.logged_in = True
+                st.success("Login successful")
+                st.rerun()
+            else:
+                st.error("Invalid credentials")
+
+    st.stop()
+
+
+# ================= MAIN APP =================
+app = ResumeApp()
+app.main()
