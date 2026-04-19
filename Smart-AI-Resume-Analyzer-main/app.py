@@ -37,6 +37,14 @@ import pandas as pd
 import json
 import streamlit as st
 import datetime
+# ================= AUTH SETUP =================
+from config.auth_db import init_user_db, add_user, verify_user
+
+# Initialize user DB
+init_user_db()
+
+# Safe session initialization
+st.session_state.setdefault("logged_in", False)
 
 
 # Set page config at the very beginning
@@ -2859,7 +2867,7 @@ class ResumeApp:
 
 # ================= LOGIN SYSTEM =================
 # 🔐 LOGIN UI
-if not st.session_state.logged_in:
+if not st.session_state.get("logged_in", False):
 
     # 🎨 Background + Styling
     st.markdown("""
