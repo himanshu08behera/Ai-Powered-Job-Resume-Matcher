@@ -2867,62 +2867,96 @@ class ResumeApp:
 
 # ================= LOGIN SYSTEM =================
 # 🔐 LOGIN UI
+# ================= LOGIN SYSTEM =================
+
 if not st.session_state.get("logged_in", False):
 
-    # 🎨 Background + Styling
+    # 🎨 FULL UI STYLE (Dribbble style)
     st.markdown("""
     <style>
     .stApp {
-        background: url("https://images.unsplash.com/photo-1518779578993-ec3579fee39f");
-        background-size: cover;
-        background-position: center;
+        background: linear-gradient(135deg, #0f172a, #020617);
     }
 
-    .stApp::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.7);
-        z-index: -1;
+    .main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
     }
 
-    .login-card {
-        background: rgba(255,255,255,0.08);
+    .container {
+        display: flex;
+        width: 900px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    .left {
+        width: 50%;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(12px);
         padding: 40px;
-        border-radius: 15px;
-        backdrop-filter: blur(10px);
-        width: 400px;
-        margin: auto;
-        margin-top: 120px;
         color: white;
     }
 
-    .title {
+    .right {
+        width: 50%;
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: white;
         text-align: center;
+        padding: 30px;
+    }
+
+    .title {
         font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .tagline {
+        font-size: 14px;
+        color: #cbd5f5;
         margin-bottom: 20px;
     }
 
     .stButton>button {
         width: 100%;
-        border-radius: 8px;
+        border-radius: 10px;
         background: linear-gradient(90deg, #06b6d4, #3b82f6);
         color: white;
         border: none;
+        height: 45px;
+    }
+
+    .google-btn {
+        background: white;
+        color: black;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 10px;
+        cursor: pointer;
+        font-weight: 500;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # 📦 Login Card Start
-    st.markdown('<div class="login-card">', unsafe_allow_html=True)
+    st.markdown('<div class="main"><div class="container">', unsafe_allow_html=True)
+
+    # LEFT SIDE (FORM)
+    st.markdown('<div class="left">', unsafe_allow_html=True)
     st.markdown('<div class="title">🚀 Smart Resume AI</div>', unsafe_allow_html=True)
+    st.markdown('<div class="tagline">AI-powered resume analyzer for modern developers</div>', unsafe_allow_html=True)
 
     option = st.radio("Select Option", ["Sign In", "Sign Up"])
 
-    # ================= SIGN UP =================
+    # SIGN UP
     if option == "Sign Up":
         name = st.text_input("Name")
         email = st.text_input("Email")
@@ -2931,21 +2965,21 @@ if not st.session_state.get("logged_in", False):
         if st.button("Create Account"):
 
             if not name or not email or not password:
-                st.error("⚠️ All fields are required!")
+                st.error("All fields required")
 
-            elif "@" not in email or "." not in email:
-                st.error("⚠️ Enter a valid email!")
+            elif "@" not in email:
+                st.error("Invalid email")
 
             elif len(password) < 6:
-                st.error("⚠️ Password must be at least 6 characters!")
+                st.error("Password too short")
 
             else:
                 if add_user(name, email, password):
-                    st.success("✅ Account created! Now login.")
+                    st.success("Account created!")
                 else:
-                    st.error("⚠️ User already exists")
+                    st.error("User exists")
 
-    # ================= LOGIN =================
+    # LOGIN
     else:
         email = st.text_input("Email")
         password = st.text_input("Password", type="password")
@@ -2953,18 +2987,30 @@ if not st.session_state.get("logged_in", False):
         if st.button("Login"):
 
             if not email or not password:
-                st.error("⚠️ Please enter email and password")
+                st.error("Enter credentials")
 
             else:
                 if verify_user(email, password):
                     st.session_state.logged_in = True
-                    st.success("Login successful")
                     st.rerun()
                 else:
-                    st.error("Invalid credentials")
+                    st.error("Invalid login")
 
-    # 📦 Login Card End
+    # Google button (UI only)
+    st.markdown('<div class="google-btn">🔵 Continue with Google</div>', unsafe_allow_html=True)
+
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # RIGHT SIDE (BRANDING)
+    st.markdown("""
+    <div class="right">
+        <h2>🤖 AI Career Assistant</h2>
+        <p>Analyze resumes, improve ATS score, and get job-ready insights.</p>
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" width="150">
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('</div></div>', unsafe_allow_html=True)
 
     st.stop()
 
