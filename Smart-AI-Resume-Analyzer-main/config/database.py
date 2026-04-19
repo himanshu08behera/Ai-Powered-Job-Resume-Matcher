@@ -1,7 +1,7 @@
 import sqlite3
 import hashlib
 
-# ✅ Central DB name (easy to change anytime)
+# ✅ Database name
 DB_NAME = "resume_data_v2.db"
 
 
@@ -9,27 +9,19 @@ def get_database_connection():
     return sqlite3.connect(DB_NAME)
 
 
-# ✅ Hash password (security improvement)
+# ✅ Password hashing
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 
-# ✅ Initialize fresh database (always clean start)
+# ✅ Initialize database (SAFE — no data loss)
 def init_database():
     conn = get_database_connection()
     cursor = conn.cursor()
 
-    # 🔴 DROP all tables (full reset)
-    cursor.execute("DROP TABLE IF EXISTS resume_data")
-    cursor.execute("DROP TABLE IF EXISTS resume_skills")
-    cursor.execute("DROP TABLE IF EXISTS resume_analysis")
-    cursor.execute("DROP TABLE IF EXISTS admin_logs")
-    cursor.execute("DROP TABLE IF EXISTS admin")
-    cursor.execute("DROP TABLE IF EXISTS ai_analysis")
-
-    # ✅ Create resume_data table
+    # ✅ Create tables ONLY if not exist (NO DROP)
     cursor.execute('''
-    CREATE TABLE resume_data (
+    CREATE TABLE IF NOT EXISTS resume_data (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT NOT NULL,
@@ -49,9 +41,8 @@ def init_database():
     )
     ''')
 
-    # ✅ Create resume_analysis table
     cursor.execute('''
-    CREATE TABLE resume_analysis (
+    CREATE TABLE IF NOT EXISTS resume_analysis (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         resume_id INTEGER,
         ats_score REAL,
@@ -64,9 +55,8 @@ def init_database():
     )
     ''')
 
-    # ✅ Create admin_logs table
     cursor.execute('''
-    CREATE TABLE admin_logs (
+    CREATE TABLE IF NOT EXISTS admin_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         admin_email TEXT NOT NULL,
         action TEXT NOT NULL,
@@ -74,9 +64,8 @@ def init_database():
     )
     ''')
 
-    # ✅ Create admin table (with hashed password)
     cursor.execute('''
-    CREATE TABLE admin (
+    CREATE TABLE IF NOT EXISTS admin (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
@@ -84,9 +73,8 @@ def init_database():
     )
     ''')
 
-    # ✅ Create AI analysis table
     cursor.execute('''
-    CREATE TABLE ai_analysis (
+    CREATE TABLE IF NOT EXISTS ai_analysis (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         resume_id INTEGER,
         model_used TEXT,
@@ -100,12 +88,7 @@ def init_database():
     conn.close()
 
 
-# ✅ Reset DB anytime
-def reset_database():
-    init_database()
-
-
-# ✅ Add admin (with hashed password)
+# ✅ Add admin
 def add_admin(email, password):
     conn = get_database_connection()
     cursor = conn.cursor()
@@ -125,7 +108,7 @@ def add_admin(email, password):
         conn.close()
 
 
-# ✅ Verify admin login
+# ✅ Verify admin
 def verify_admin(email, password):
     conn = get_database_connection()
     cursor = conn.cursor()
@@ -133,7 +116,7 @@ def verify_admin(email, password):
     try:
         hashed_password = hash_password(password)
         cursor.execute(
-            'SELECT * FROM admin WHERE email = ? AND password = ?',
+            'SELECT * FROM admin WHERE email=? AND password=?',
             (email, hashed_password)
         )
         return cursor.fetchone() is not None
@@ -141,7 +124,7 @@ def verify_admin(email, password):
         conn.close()
 
 
-# ✅ Save resume data
+# ✅ Save resume
 def save_resume_data(data):
     conn = get_database_connection()
     cursor = conn.cursor()
@@ -184,30 +167,48 @@ def save_resume_data(data):
         conn.close()
 
 
-# ✅ Save AI analysis
-def save_ai_analysis_data(resume_id, analysis_data):
+# ✅ Save analysis
+def save_analysis_data(resume_id, analysis):
     conn = get_database_connection()
     cursor = conn.cursor()
 
     try:
-        cursor.execute("""
-        INSERT INTO ai_analysis (
-            resume_id, model_used, resume_score, job_role
-        ) VALUES (?, ?, ?, ?)
-        """, (
+        cursor.execute('''
+        INSERT INTO resume_analysis (
+            resume_id, ats_score, keyword_match_score,
+            format_score, section_score, missing_skills,
+            recommendations
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (
             resume_id,
-            analysis_data.get('model_used', ''),
-            analysis_data.get('resume_score', 0),
-            analysis_data.get('job_role', '')
+            float(analysis.get('ats_score', 0)),
+            float(analysis.get('keyword_match_score', 0)),
+            float(analysis.get('format_score', 0)),
+            float(analysis.get('section_score', 0)),
+            analysis.get('missing_skills', ''),
+            analysis.get('recommendations', '')
         ))
 
         conn.commit()
-        return cursor.lastrowid
 
     except Exception as e:
         print(f"Error: {e}")
         conn.rollback()
-        return None
 
+    finally:
+        conn.close()
+
+
+# ✅ Log admin action
+def log_admin_action(admin_email, action):
+    conn = get_database_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            'INSERT INTO admin_logs (admin_email, action) VALUES (?, ?)',
+            (admin_email, action)
+        )
+        conn.commit()
     finally:
         conn.close()
