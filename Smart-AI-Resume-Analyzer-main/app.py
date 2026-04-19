@@ -2857,16 +2857,14 @@ class ResumeApp:
         self.add_footer()
 
 
-if __name__ == "__main__":
-    # ================= LOGIN SYSTEM =================
-from config.auth_db import init_user_db, add_user, verify_user
+# ================= LOGIN SYSTEM =================
 import streamlit as st
+from config.auth_db import init_user_db, add_user, verify_user
 
 init_user_db()
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
-
 
 if not st.session_state.logged_in:
     st.title("🔐 Smart Resume AI")
@@ -2900,5 +2898,6 @@ if not st.session_state.logged_in:
 
 
 # ================= MAIN APP =================
-app = ResumeApp()
-app.main()
+if __name__ == "__main__":
+    app = ResumeApp()
+    app.main()
