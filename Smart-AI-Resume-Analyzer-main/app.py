@@ -2800,80 +2800,63 @@ class ResumeApp:
 
 
     def main(self):
-        """Main application entry point"""
-        self.apply_global_styles()
-        
-        # Admin login/logout in sidebar
-        with st.sidebar:
-            st_lottie(self.load_lottie_url("https://assets5.lottiefiles.com/packages/lf20_xyadoh9h.json"), height=200, key="sidebar_animation")
-            st.title("Smart Resume AI")
-            st.markdown("---")
-            
-            # Navigation buttons
-            for page_name in self.pages.keys():
-                if st.button(page_name, use_container_width=True):
-                    cleaned_name = page_name.lower().replace(" ", "_").replace("🏠", "").replace("🔍", "").replace("📝", "").replace("📊", "").replace("🎯", "").replace("💬", "").replace("ℹ️", "").strip()
-                    st.session_state.page = cleaned_name
-                    st.rerun()
-
-            # Add some space before admin login
-            st.markdown("<br><br>", unsafe_allow_html=True)
-            st.markdown("---")
-
-            # Admin Login/Logout section at bottom
-            if st.session_state.get('is_admin', False):
-                st.success(f"Logged in as: {st.session_state.get('current_admin_email')}")
-                if st.button("Logout", key="logout_button"):
-                    try:
-                        log_admin_action(st.session_state.get('current_admin_email'), "logout")
-                        st.session_state.is_admin = False
-                        st.session_state.current_admin_email = None
-                        st.success("Logged out successfully!")
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Error during logout: {str(e)}")
-            else:
-                with st.expander("👤 Admin Login"):
-                    admin_email_input = st.text_input("Email", key="admin_email_input")
-                    admin_password = st.text_input("Password", type="password", key="admin_password_input")
-                    if st.button("Login", key="login_button"):
-                            try:
-                                if verify_admin(admin_email_input, admin_password):
-                                    st.session_state.is_admin = True
-                                    st.session_state.current_admin_email = admin_email_input
-                                    log_admin_action(admin_email_input, "login")
-                                    st.success("Logged in successfully!")
-                                    st.rerun()
-                                else:
-                                    st.error("Invalid credentials")
-                            except Exception as e:
-                                st.error(f"Error during login: {str(e)}")
-        
-            # Display the repository notification in the sidebar
-            self.show_repo_notification()
-
-        # Force home page on first load
-        if 'initial_load' not in st.session_state:
-            st.session_state.initial_load = True
-            st.session_state.page = 'home'
-            st.rerun()
-        
-        # Get current page and render it
-        current_page = st.session_state.get('page', 'home')
-        
-        # Create a mapping of cleaned page names to original names
-        page_mapping = {name.lower().replace(" ", "_").replace("🏠", "").replace("🔍", "").replace("📝", "").replace("📊", "").replace("🎯", "").replace("💬", "").replace("ℹ️", "").strip(): name 
-                       for name in self.pages.keys()}
-        
-        # Render the appropriate page
-        if current_page in page_mapping:
-            self.pages[page_mapping[current_page]]()
-        else:
-            # Default to home page if invalid page
-            self.render_home()
+    """Main application entry point"""
+    self.apply_global_styles()
     
-        # Add footer to every page
-        self.add_footer()
+    # Sidebar
+    with st.sidebar:
+        st_lottie(self.load_lottie_url("https://assets5.lottiefiles.com/packages/lf20_xyadoh9h.json"), height=200, key="sidebar_animation")
+        st.title("Smart Resume AI")
+        st.markdown("---")
+        
+        # Navigation buttons
+        for page_name in self.pages.keys():
+            if st.button(page_name, use_container_width=True):
+                cleaned_name = page_name.lower().replace(" ", "_").replace("🏠", "").replace("🔍", "").replace("📝", "").replace("📊", "").replace("🎯", "").replace("💬", "").replace("ℹ️", "").strip()
+                st.session_state.page = cleaned_name
+                st.rerun()
+
+        # Optional spacing
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("---")
+
+        # (❌ Admin login removed completely)
+
+        # Repository notification (keep this)
+        self.show_repo_notification()
+
+    # Force home page on first load
+    if 'initial_load' not in st.session_state:
+        st.session_state.initial_load = True
+        st.session_state.page = 'home'
+        st.rerun()
+    
+    # Get current page
+    current_page = st.session_state.get('page', 'home')
+    
+    # Mapping page names
+    page_mapping = {
+        name.lower().replace(" ", "_")
+        .replace("🏠", "")
+        .replace("🔍", "")
+        .replace("📝", "")
+        .replace("📊", "")
+        .replace("🎯", "")
+        .replace("💬", "")
+        .replace("ℹ️", "")
+        .strip(): name
+        for name in self.pages.keys()
+    }
+    
+    # Render page
+    if current_page in page_mapping:
+        self.pages[page_mapping[current_page]]()
+    else:
+        self.render_home()
+    
+    # Footer
+    self.add_footer()
+
 
 if __name__ == "__main__":
     app = ResumeApp()
