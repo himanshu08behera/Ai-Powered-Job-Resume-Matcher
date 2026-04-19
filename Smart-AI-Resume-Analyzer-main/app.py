@@ -2861,13 +2861,49 @@ class ResumeApp:
 import streamlit as st
 from config.auth_db import init_user_db, add_user, verify_user
 
+# Initialize DB
 init_user_db()
 
+# Session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
+
+# 🎨 CUSTOM STYLE
+st.markdown("""
+<style>
+.stApp {
+    background: linear-gradient(135deg, #0f172a, #1e293b, #0ea5e9);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+}
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+.login-box {
+    background: rgba(255,255,255,0.08);
+    padding: 40px;
+    border-radius: 15px;
+    backdrop-filter: blur(12px);
+    width: 400px;
+    margin: auto;
+    margin-top: 120px;
+}
+h2 {
+    text-align: center;
+    color: white;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+# 🔐 LOGIN UI
 if not st.session_state.logged_in:
-    st.title("🔐 Smart Resume AI")
+
+    st.markdown('<div class="login-box">', unsafe_allow_html=True)
+    st.markdown('<h2>🔐 Smart Resume AI</h2>', unsafe_allow_html=True)
 
     option = st.radio("Select Option", ["Sign In", "Sign Up"])
 
@@ -2894,6 +2930,7 @@ if not st.session_state.logged_in:
             else:
                 st.error("Invalid credentials")
 
+    st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 
