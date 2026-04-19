@@ -27,7 +27,7 @@ from config.database import (
     init_database, verify_admin, log_admin_action, save_ai_analysis_data,
     get_ai_analysis_stats, reset_ai_analysis_stats, get_detailed_ai_analysis_stats
 )
-init_database()
+
 from utils.ai_resume_analyzer import AIResumeAnalyzer
 from utils.resume_builder import ResumeBuilder
 from utils.resume_analyzer import ResumeAnalyzer
