@@ -2900,10 +2900,76 @@ h2 {
 
 
 # 🔐 LOGIN UI
+# 🔐 LOGIN UI
 if not st.session_state.logged_in:
 
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
-    st.markdown('<h2>🔐 Smart Resume AI</h2>', unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    .main-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .card {
+        display: flex;
+        width: 850px;
+        border-radius: 20px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+
+    .left {
+        width: 50%;
+        padding: 40px;
+        color: white;
+    }
+
+    .right {
+        width: 50%;
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: white;
+        text-align: center;
+        padding: 30px;
+    }
+
+    .title {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .google-btn {
+        background: white;
+        color: black;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .stButton>button {
+        width: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #06b6d4, #3b82f6);
+        color: white;
+        border: none;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="main-container"><div class="card">', unsafe_allow_html=True)
+
+    # LEFT SIDE
+    st.markdown('<div class="left">', unsafe_allow_html=True)
+    st.markdown('<div class="title">🔐 Smart Resume AI</div>', unsafe_allow_html=True)
 
     option = st.radio("Select Option", ["Sign In", "Sign Up"])
 
@@ -2930,9 +2996,24 @@ if not st.session_state.logged_in:
             else:
                 st.error("Invalid credentials")
 
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.stop()
+    # REAL GOOGLE BUTTON (we connect below)
+    if st.button("🔵 Continue with Google"):
+        st.session_state.google_login = True
+        st.rerun()
 
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # RIGHT SIDE
+    st.markdown("""
+    <div class="right">
+        <h2>🚀 AI Career Assistant</h2>
+        <p>Build smarter resumes, analyze skills, and land your dream job.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('</div></div>', unsafe_allow_html=True)
+
+    st.stop()
 
 # ================= MAIN APP =================
 if __name__ == "__main__":
