@@ -2944,6 +2944,19 @@ if not st.session_state.get("logged_in", False):
         cursor: pointer;
         font-weight: 500;
     }
+
+html, body, [data-testid="stAppViewContainer"] {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;   /* 🔥 stops scrolling */
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;   /* 🔥 full screen center */
+}
     </style>
     """, unsafe_allow_html=True)
 
@@ -2951,7 +2964,7 @@ if not st.session_state.get("logged_in", False):
 
     # LEFT SIDE (FORM)
     st.markdown('<div class="left">', unsafe_allow_html=True)
-    st.markdown('<div class="title">🚀 Smart Resume AI</div>', unsafe_allow_html=True)
+    st.markdown('<div class="title">🚀 Ai-Powered-Job-Resume-Matcher</div>', unsafe_allow_html=True)
     st.markdown('<div class="tagline">AI-powered resume analyzer for modern developers</div>', unsafe_allow_html=True)
 
     option = st.radio("Select Option", ["Sign In", "Sign Up"])
@@ -3003,16 +3016,13 @@ if not st.session_state.get("logged_in", False):
 
     # RIGHT SIDE (BRANDING)
     st.markdown("""
-    <div class="right">
-        <h2>🤖 AI Career Assistant</h2>
-        <p>Analyze resumes, improve ATS score, and get job-ready insights.</p>
-        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" width="150">
-    </div>
-    """, unsafe_allow_html=True)
+<div class="right">
+    <h2>🤖 AI Career Assistant</h2>
+    <p>Build smarter resumes & land your dream job</p>
+</div>
+""", unsafe_allow_html=True)
 
-    st.markdown('</div></div>', unsafe_allow_html=True)
-
-    st.stop()
+st.video("https://www.w3schools.com/html/mov_bbb.mp4")
 
 # ================= MAIN APP =================
 if __name__ == "__main__":
