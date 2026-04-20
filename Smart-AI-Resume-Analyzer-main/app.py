@@ -2871,15 +2871,21 @@ class ResumeApp:
 
 Here's the complete ready-to-paste login block — just replace your existing if not st.session_state.get("logged_in", False): section with this entire thing:
 
+Here's the complete ready-to-paste login block — just replace your existing if not st.session_state.get("logged_in", False): section with this entire thing:
+…is English, not Python. Python sees the ' in Here's and thinks you started a string that never ends → SyntaxError: unterminated string literal.
+
+Fix
+Open app.py, go to line 2872, and delete that sentence (and any other non-code explanation lines you may have pasted above or below it).
+
+Only the code between the triple backticks ``` should be inside app.py — nothing else.
+
+Clean version — copy ONLY this (no extra text)
 if not st.session_state.get("logged_in", False):
 
-    # 🎨 FULL UI STYLE — AI/Tech background + glass login card
     st.markdown("""
     <style>
-    /* Hide Streamlit chrome */
     #MainMenu, header, footer {visibility: hidden;}
 
-    /* Full-screen AI/tech background image with dark overlay */
     html, body, [data-testid="stAppViewContainer"] {
         height: 100%;
         margin: 0;
@@ -2895,7 +2901,6 @@ if not st.session_state.get("logged_in", False):
 
     [data-testid="stHeader"] { background: transparent; }
 
-    /* Center the card */
     .block-container {
         display: flex;
         justify-content: center;
@@ -2909,7 +2914,6 @@ if not st.session_state.get("logged_in", False):
         font-weight: 800;
         color: #fff;
         margin-bottom: 8px;
-        letter-spacing: 0.3px;
     }
 
     .tagline {
@@ -2918,7 +2922,6 @@ if not st.session_state.get("logged_in", False):
         margin-bottom: 22px;
     }
 
-    /* Input styling */
     .stTextInput > div > div > input {
         background: rgba(255,255,255,0.08) !important;
         color: #fff !important;
@@ -2930,7 +2933,6 @@ if not st.session_state.get("logged_in", False):
 
     label, .stRadio label, .stRadio div { color: #e2e8f0 !important; }
 
-    /* Primary button */
     .stButton > button {
         width: 100%;
         border-radius: 10px;
@@ -2957,7 +2959,6 @@ if not st.session_state.get("logged_in", False):
         font-weight: 600;
     }
 
-    /* Right branding panel */
     .right-panel {
         padding: 40px 30px;
         background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(6,182,212,0.15));
@@ -2971,16 +2972,14 @@ if not st.session_state.get("logged_in", False):
     </style>
     """, unsafe_allow_html=True)
 
-    # Two-column layout (left = form, right = branding)
     col1, col2 = st.columns([1, 1], gap="large")
 
     with col1:
-        st.markdown('<div class="title">🚀 AI-Powered Job Resume Matcher</div>', unsafe_allow_html=True)
+        st.markdown('<div class="title">AI-Powered Job Resume Matcher</div>', unsafe_allow_html=True)
         st.markdown('<div class="tagline">AI-powered resume analyzer for modern developers</div>', unsafe_allow_html=True)
 
         option = st.radio("Select Option", ["Sign In", "Sign Up"], horizontal=True)
 
-        # SIGN UP
         if option == "Sign Up":
             name = st.text_input("Name", placeholder="Your full name")
             email = st.text_input("Email", placeholder="you@example.com")
@@ -2999,7 +2998,6 @@ if not st.session_state.get("logged_in", False):
                     else:
                         st.error("User exists")
 
-        # LOGIN
         else:
             email = st.text_input("Email", placeholder="you@example.com")
             password = st.text_input("Password", type="password", placeholder="Your password")
@@ -3014,24 +3012,17 @@ if not st.session_state.get("logged_in", False):
                     else:
                         st.error("Invalid login")
 
-        st.markdown('<div class="google-btn">🔵 Continue with Google</div>', unsafe_allow_html=True)
+        st.markdown('<div class="google-btn">Continue with Google</div>', unsafe_allow_html=True)
 
     with col2:
         st.markdown("""
         <div class="right-panel">
-            <h2>🤖 AI Career Assistant</h2>
+            <h2>AI Career Assistant</h2>
             <p>Build smarter resumes & land your dream job with AI-powered insights tailored to every role.</p>
         </div>
         """, unsafe_allow_html=True)
 
-    st.stop()   # 🔥 halts here — dashboard/checking code below will NOT run until login succeeds
-
-
-# ✅ Your dashboard / resume-matcher / "checking part" code goes here (unchanged)
-# Example:
-# st.title("Welcome to the Resume Matcher")
-# ... rest of your app ...
-
+    st.stop()
 # ================= MAIN APP =================
 if __name__ == "__main__":
     app = ResumeApp()
