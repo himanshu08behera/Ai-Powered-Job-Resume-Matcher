@@ -2871,159 +2871,169 @@ class ResumeApp:
 
 if not st.session_state.get("logged_in", False):
 
-    # 🎨 FULL UI STYLE (Dribbble style)
+    # 🎨 FULL UI STYLE — AI/Tech background + glass login card
     st.markdown("""
     <style>
-    .stApp {
-        background: linear-gradient(135deg, #0f172a, #020617);
+    /* Hide Streamlit chrome */
+    #MainMenu, header, footer {visibility: hidden;}
+
+    /* Full-screen AI/tech background image with dark overlay */
+    html, body, [data-testid="stAppViewContainer"] {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
     }
 
-    .main {
+    [data-testid="stAppViewContainer"] {
+        background:
+            linear-gradient(135deg, rgba(2,6,23,0.85), rgba(15,23,42,0.75)),
+            url("https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1920&q=80")
+            center/cover no-repeat fixed;
+    }
+
+    [data-testid="stHeader"] { background: transparent; }
+
+    /* Center the card */
+    .block-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
+        padding-top: 0 !important;
     }
 
-    .container {
+    /* Glass login container */
+    .login-card {
         display: flex;
         width: 900px;
+        max-width: 95%;
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    }
-
-    .left {
-        width: 50%;
         background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(12px);
-        padding: 40px;
-        color: white;
-    }
-
-    .right {
-        width: 50%;
-        background: linear-gradient(135deg, #3b82f6, #06b6d4);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        color: white;
-        text-align: center;
-        padding: 30px;
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255,255,255,0.1);
     }
 
     .title {
         font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 20px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 8px;
+        letter-spacing: 0.3px;
     }
 
     .tagline {
         font-size: 14px;
         color: #cbd5f5;
-        margin-bottom: 20px;
+        margin-bottom: 22px;
     }
 
-    .stButton>button {
+    /* Input styling */
+    .stTextInput > div > div > input {
+        background: rgba(255,255,255,0.08) !important;
+        color: #fff !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        border-radius: 10px !important;
+        height: 45px;
+    }
+    .stTextInput > div > div > input::placeholder { color: #94a3b8; }
+
+    label, .stRadio label, .stRadio div { color: #e2e8f0 !important; }
+
+    /* Primary button */
+    .stButton > button {
         width: 100%;
         border-radius: 10px;
         background: linear-gradient(90deg, #06b6d4, #3b82f6);
         color: white;
         border: none;
         height: 45px;
+        font-weight: 600;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .stButton > button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 25px rgba(59,130,246,0.35);
     }
 
     .google-btn {
         background: white;
-        color: black;
-        padding: 10px;
-        border-radius: 8px;
+        color: #111;
+        padding: 11px;
+        border-radius: 10px;
         text-align: center;
-        margin-top: 10px;
+        margin-top: 12px;
         cursor: pointer;
-        font-weight: 500;
+        font-weight: 600;
     }
 
-html, body, [data-testid="stAppViewContainer"] {
-    height: 100%;
-    margin: 0;
-    overflow: hidden;   /* 🔥 stops scrolling */
-}
-
-.main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;   /* 🔥 full screen center */
-}
+    /* Right branding panel */
+    .right-panel {
+        padding: 40px 30px;
+        background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(6,182,212,0.15));
+        color: #fff;
+        text-align: center;
+        border-left: 1px solid rgba(255,255,255,0.08);
+    }
+    .right-panel h2 { font-size: 26px; margin-bottom: 10px; }
+    .right-panel p  { color: #cbd5f5; font-size: 14px; line-height: 1.6; }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="main"><div class="container">', unsafe_allow_html=True)
+    # Two-column layout (left = form, right = branding)
+    col1, col2 = st.columns([1, 1], gap="large")
 
-    # LEFT SIDE (FORM)
-    st.markdown('<div class="left">', unsafe_allow_html=True)
-    st.markdown('<div class="title">🚀 Ai-Powered-Job-Resume-Matcher</div>', unsafe_allow_html=True)
-    st.markdown('<div class="tagline">AI-powered resume analyzer for modern developers</div>', unsafe_allow_html=True)
+    with col1:
+        st.markdown('<div class="title">🚀 AI-Powered Job Resume Matcher</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tagline">AI-powered resume analyzer for modern developers</div>', unsafe_allow_html=True)
 
-    option = st.radio("Select Option", ["Sign In", "Sign Up"])
+        option = st.radio("Select Option", ["Sign In", "Sign Up"], horizontal=True)
 
-    # SIGN UP
-    if option == "Sign Up":
-        name = st.text_input("Name")
-        email = st.text_input("Email")
-        password = st.text_input("Password", type="password")
+        # SIGN UP
+        if option == "Sign Up":
+            name = st.text_input("Name", placeholder="Your full name")
+            email = st.text_input("Email", placeholder="you@example.com")
+            password = st.text_input("Password", type="password", placeholder="At least 6 characters")
 
-        if st.button("Create Account"):
-
-            if not name or not email or not password:
-                st.error("All fields required")
-
-            elif "@" not in email:
-                st.error("Invalid email")
-
-            elif len(password) < 6:
-                st.error("Password too short")
-
-            else:
-                if add_user(name, email, password):
-                    st.success("Account created!")
+            if st.button("Create Account"):
+                if not name or not email or not password:
+                    st.error("All fields required")
+                elif "@" not in email:
+                    st.error("Invalid email")
+                elif len(password) < 6:
+                    st.error("Password too short")
                 else:
-                    st.error("User exists")
+                    if add_user(name, email, password):
+                        st.success("Account created!")
+                    else:
+                        st.error("User exists")
 
-    # LOGIN
-    else:
-        email = st.text_input("Email")
-        password = st.text_input("Password", type="password")
+        # LOGIN
+        else:
+            email = st.text_input("Email", placeholder="you@example.com")
+            password = st.text_input("Password", type="password", placeholder="Your password")
 
-        if st.button("Login"):
-
-            if not email or not password:
-                st.error("Enter credentials")
-
-            else:
-                if verify_user(email, password):
-                    st.session_state.logged_in = True
-                    st.rerun()
+            if st.button("Login"):
+                if not email or not password:
+                    st.error("Enter credentials")
                 else:
-                    st.error("Invalid login")
+                    if verify_user(email, password):
+                        st.session_state.logged_in = True
+                        st.rerun()
+                    else:
+                        st.error("Invalid login")
 
-    # Google button (UI only)
-    st.markdown('<div class="google-btn">🔵 Continue with Google</div>', unsafe_allow_html=True)
+        st.markdown('<div class="google-btn">🔵 Continue with Google</div>', unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # RIGHT SIDE (BRANDING)
-    st.markdown("""
-<div class="right">
-    <h2>🤖 AI Career Assistant</h2>
-    <p>Build smarter resumes & land your dream job</p>
-</div>
-""", unsafe_allow_html=True)
-
-st.video("https://www.w3schools.com/html/mov_bbb.mp4")
-
+    with col2:
+        st.markdown("""
+        <div class="right-panel">
+            <h2>🤖 AI Career Assistant</h2>
+            <p>Build smarter resumes & land your dream job with AI-powered insights tailored to every role.</p>
+        </div>
+        """, unsafe_allow_html=True)
 # ================= MAIN APP =================
 if __name__ == "__main__":
     app = ResumeApp()
