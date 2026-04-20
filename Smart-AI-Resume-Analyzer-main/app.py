@@ -2869,17 +2869,7 @@ class ResumeApp:
 # 🔐 LOGIN UI
 # ================= LOGIN SYSTEM =================
 
-Here's the complete ready-to-paste login block — just replace your existing if not st.session_state.get("logged_in", False): section with this entire thing:
 
-Here's the complete ready-to-paste login block — just replace your existing if not st.session_state.get("logged_in", False): section with this entire thing:
-…is English, not Python. Python sees the ' in Here's and thinks you started a string that never ends → SyntaxError: unterminated string literal.
-
-Fix
-Open app.py, go to line 2872, and delete that sentence (and any other non-code explanation lines you may have pasted above or below it).
-
-Only the code between the triple backticks ``` should be inside app.py — nothing else.
-
-Clean version — copy ONLY this (no extra text)
 if not st.session_state.get("logged_in", False):
 
     st.markdown("""
