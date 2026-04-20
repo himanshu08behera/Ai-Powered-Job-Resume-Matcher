@@ -2869,6 +2869,8 @@ class ResumeApp:
 # 🔐 LOGIN UI
 # ================= LOGIN SYSTEM =================
 
+Here's the complete ready-to-paste login block — just replace your existing if not st.session_state.get("logged_in", False): section with this entire thing:
+
 if not st.session_state.get("logged_in", False):
 
     # 🎨 FULL UI STYLE — AI/Tech background + glass login card
@@ -2900,20 +2902,6 @@ if not st.session_state.get("logged_in", False):
         align-items: center;
         min-height: 100vh;
         padding-top: 0 !important;
-    }
-
-    /* Glass login container */
-    .login-card {
-        display: flex;
-        width: 900px;
-        max-width: 95%;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-        background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-        border: 1px solid rgba(255,255,255,0.1);
     }
 
     .title {
@@ -2975,7 +2963,8 @@ if not st.session_state.get("logged_in", False):
         background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(6,182,212,0.15));
         color: #fff;
         text-align: center;
-        border-left: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.08);
     }
     .right-panel h2 { font-size: 26px; margin-bottom: 10px; }
     .right-panel p  { color: #cbd5f5; font-size: 14px; line-height: 1.6; }
@@ -3034,6 +3023,15 @@ if not st.session_state.get("logged_in", False):
             <p>Build smarter resumes & land your dream job with AI-powered insights tailored to every role.</p>
         </div>
         """, unsafe_allow_html=True)
+
+    st.stop()   # 🔥 halts here — dashboard/checking code below will NOT run until login succeeds
+
+
+# ✅ Your dashboard / resume-matcher / "checking part" code goes here (unchanged)
+# Example:
+# st.title("Welcome to the Resume Matcher")
+# ... rest of your app ...
+
 # ================= MAIN APP =================
 if __name__ == "__main__":
     app = ResumeApp()
