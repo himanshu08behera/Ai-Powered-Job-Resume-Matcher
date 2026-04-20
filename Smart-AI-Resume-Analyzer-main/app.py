@@ -2870,6 +2870,16 @@ class ResumeApp:
 # ================= LOGIN SYSTEM =================
 
 
+# ==== Handle return from Google OAuth ====
+if getattr(st, "user", None) and st.user.is_logged_in and not st.session_state.get("logged_in", False):
+    try:
+        add_user(st.user.name, st.user.email, "google-oauth")
+    except Exception:
+        pass
+    st.session_state.logged_in = True
+    st.rerun()
+
+
 if not st.session_state.get("logged_in", False):
 
     st.markdown("""
@@ -2938,15 +2948,23 @@ if not st.session_state.get("logged_in", False):
         box-shadow: 0 10px 25px rgba(59,130,246,0.35);
     }
 
-    .google-btn {
-        background: white;
-        color: #111;
-        padding: 11px;
-        border-radius: 10px;
+    /* Google button — override default blue style */
+    div[data-testid="stButton"] > button[kind="secondary"] {
+        background: #ffffff !important;
+        color: #111 !important;
+        font-weight: 600 !important;
+        border: 1px solid rgba(0,0,0,0.1) !important;
+    }
+    div[data-testid="stButton"] > button[kind="secondary"]:hover {
+        background: #f5f5f5 !important;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25) !important;
+    }
+
+    .or-divider {
         text-align: center;
-        margin-top: 12px;
-        cursor: pointer;
-        font-weight: 600;
+        color: #94a3b8;
+        margin: 14px 0 6px;
+        font-size: 13px;
     }
 
     .right-panel {
@@ -3002,7 +3020,10 @@ if not st.session_state.get("logged_in", False):
                     else:
                         st.error("Invalid login")
 
-        st.markdown('<div class="google-btn">Continue with Google</div>', unsafe_allow_html=True)
+        # ---- REAL Google Login button ----
+        st.markdown('<div class="or-divider">— or —</div>', unsafe_allow_html=True)
+        if st.button("Continue with Google", key="google_login", type="secondary"):
+            st.login("google")
 
     with col2:
         st.markdown("""
