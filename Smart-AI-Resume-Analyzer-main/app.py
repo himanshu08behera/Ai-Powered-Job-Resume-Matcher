@@ -29,6 +29,7 @@ from config.database import (
 )
 
 from utils.ai_resume_analyzer import AIResumeAnalyzer
+from templates.ats_templates import render_ats_templates
 from utils.resume_builder import ResumeBuilder
 from utils.resume_analyzer import ResumeAnalyzer
 import traceback
@@ -2474,13 +2475,17 @@ class ResumeApp:
                                         status = "Excellent" if ats_score >= 80 else "Good" if ats_score >= 60 else "Needs Improvement"
                                         st.markdown(f"<div style='text-align: center; font-weight: bold;'>{status}</div>", unsafe_allow_html=True)
 
-                                    # Add Job Description Match Score if custom job description was used
-                                    if st.session_state.get('used_custom_job_desc', False) and custom_job_description:
-                                        # Extract job match score from analysis result or calculate it
-                                        job_match_score = analysis_result.get("job_match_score", 0)
-                                        if not job_match_score and "job_match" in analysis_result:
-                                            job_match_score = analysis_result["job_match"].get("score", 0)
-                                        
+                                    # # Add Job Description Match Score if custom job description was used
+if st.session_state.get('used_custom_job_desc', False) and custom_job_description:
+    
+    job_match_score = analysis_result.get("job_match_score", 0)
+    
+    if not job_match_score and "job_match" in analysis_result:
+        job_match_score = analysis_result["job_match"].get("score", 0)
+
+
+    # 🔥 ADD THIS LINE (MOST IMPORTANT)
+    st.session_state["ats_score"] = job_match_score
                                         # If we have a job match score, display it
                                         if job_match_score:
                                             st.markdown("""
@@ -3038,3 +3043,20 @@ if not st.session_state.get("logged_in", False):
 if __name__ == "__main__":
     app = ResumeApp()
     app.main()
+
+
+
+
+
+
+
+
+
+    from templates.ats_templates import render_ats_templates
+import streamlit as st
+
+# 🔥 Show templates ONLY when ATS score exists
+if "ats_score" in st.session_state:
+    st.markdown("---")
+    st.subheader("📄 Improve Your Resume (ATS)")
+    render_ats_templates(st.session_state["ats_score"])
