@@ -1,10 +1,4 @@
-🛡️ BULLETPROOF METHOD — Use GitHub's "Upload File" feature
-This bypasses the chat → browser paste corruption completely.
 
-Step 1: Open Windows Notepad (NOT Word, NOT VSCode initially — Notepad is safe because it strips smart quotes)
-Press Windows key → type notepad → hit Enter
-Step 2: Copy the code below and paste it into Notepad
-I've made it SHORTER and SIMPLER — only plain ASCII, zero exotic syntax, zero triple-quoted strings:
 
 import time
 import requests
