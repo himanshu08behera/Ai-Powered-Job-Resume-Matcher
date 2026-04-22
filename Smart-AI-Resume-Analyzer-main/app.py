@@ -2476,13 +2476,16 @@ class ResumeApp:
                                         st.markdown(f"<div style='text-align: center; font-weight: bold;'>{status}</div>", unsafe_allow_html=True)
 
                                     # # Add Job Description Match Score if custom job description was used
+# Add Job Description Match Score if custom job description was used
 if st.session_state.get('used_custom_job_desc', False) and custom_job_description:
-    
+
     job_match_score = analysis_result.get("job_match_score", 0)
-    
+
     if not job_match_score and "job_match" in analysis_result:
         job_match_score = analysis_result["job_match"].get("score", 0)
 
+    # 🔥 IMPORTANT LINE (this connects everything)
+    st.session_state["ats_score"] = job_match_score
 
     # 🔥 ADD THIS LINE (MOST IMPORTANT)
     st.session_state["ats_score"] = job_match_score
