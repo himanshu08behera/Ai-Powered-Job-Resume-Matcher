@@ -2477,15 +2477,7 @@ class ResumeApp:
 
                                     # # Add Job Description Match Score if custom job description was used
 # Add Job Description Match Score if custom job description was used
-if st.session_state.get('used_custom_job_desc', False) and custom_job_description:
 
-    job_match_score = analysis_result.get("job_match_score", 0)
-
-    if not job_match_score and "job_match" in analysis_result:
-        job_match_score = analysis_result["job_match"].get("score", 0)
-
-    # 🔥 IMPORTANT LINE (this connects everything)
-    st.session_state["ats_score"] = job_match_score
 
     # 🔥 ADD THIS LINE (MOST IMPORTANT)
     st.session_state["ats_score"] = job_match_score
@@ -3081,7 +3073,6 @@ from templates.ats_templates import render_ats_templates
 import streamlit as st
 
 try:
-    # Try extracting ATS score safely from analysis_result
     if 'analysis_result' in locals():
 
         job_match_score = analysis_result.get("job_match_score", 0)
@@ -3092,6 +3083,14 @@ try:
         if job_match_score:
             st.session_state["ats_score"] = job_match_score
 
+except Exception as e:
+    print("ATS extraction error:", e)
+
+
+if "ats_score" in st.session_state:
+    st.markdown("---")
+    st.subheader("📄 Improve Your Resume (ATS)")
+    render_ats_templates(st.session_state["ats_score"])
 except Exception as e:
     print("ATS extraction error:", e)
 
