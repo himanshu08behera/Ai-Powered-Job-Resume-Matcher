@@ -35,3 +35,5 @@ seaborn
 pypdf2
 streamlit>=1.42.0
 Authlib>=1.3.2
+beautifulsoup4
+lxml
