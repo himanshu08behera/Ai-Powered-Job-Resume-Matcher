@@ -5,23 +5,32 @@ import streamlit as st
 from bs4 import BeautifulSoup
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
     "Accept-Language": "en-US,en;q=0.9",
 }
 
 LIST_URL = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
 
 
+# 🔥 FIXED: latest jobs + sorting
 def _fetch_listings(keywords, location, start):
-    params = {"keywords": keywords, "location": location, "start": start}
+    params = {
+        "keywords": keywords,
+        "location": location,
+        "start": start,
+        "f_TPR": "r86400",   # ✅ last 24 hours
+        "sortBy": "DD"       # ✅ newest first
+    }
+
     try:
         r = requests.get(LIST_URL, headers=HEADERS, params=params, timeout=15)
         if r.status_code == 200:
             return r.text
         else:
-            st.warning(f"Request failed with status {r.status_code}")
+            print("Status Code:", r.status_code)
     except Exception as e:
-        st.error(f"Fetch error: {e}")
+        print("Error:", e)
+
     return ""
 
 
@@ -86,12 +95,12 @@ def _scrape(keywords, location, count):
         start += 25
         time.sleep(1)
 
-    rows = rows[:count]
-
     if not rows:
         return pd.DataFrame()
 
-    df = pd.DataFrame(rows)
+    # 🔥 remove duplicates
+    df = pd.DataFrame(rows).drop_duplicates(subset=["Website URL"])
+    df = df.head(count)
 
     descriptions = []
     for url in df["Website URL"]:
@@ -119,14 +128,14 @@ def render_linkedin_scraper():
         st.warning("Enter job title")
         return
 
-    with st.spinner("Fetching jobs..."):
+    with st.spinner("Fetching latest jobs..."):
         df = _scrape(title, location, int(count))
 
     if df.empty:
         st.error("No jobs found")
         return
 
-    st.success(f"Found {len(df)} jobs")
+    st.success(f"Found {len(df)} latest jobs")
 
     for _, row in df.iterrows():
         st.subheader(row["Job Title"])
