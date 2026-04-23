@@ -1,4 +1,4 @@
-﻿"""
+"""
 Smart Resume AI - Main Application
 """
 import time
@@ -2475,12 +2475,13 @@ class ResumeApp:
                                         status = "Excellent" if ats_score >= 80 else "Good" if ats_score >= 60 else "Needs Improvement"
                                         st.markdown(f"<div style='text-align: center; font-weight: bold;'>{status}</div>", unsafe_allow_html=True)
 
-                                    # # Add Job Description Match Score if custom job description was used
-# Add Job Description Match Score if custom job description was used
-
-
-    # 🔥 ADD THIS LINE (MOST IMPORTANT)
-    st.session_state["ats_score"] = job_match_score
+                                    # Add Job Description Match Score if custom job description was used
+                                    if st.session_state.get('used_custom_job_desc', False) and custom_job_description:
+                                        # Extract job match score from analysis result or calculate it
+                                        job_match_score = analysis_result.get("job_match_score", 0)
+                                        if not job_match_score and "job_match" in analysis_result:
+                                            job_match_score = analysis_result["job_match"].get("score", 0)
+                                        
                                         # If we have a job match score, display it
                                         if job_match_score:
                                             st.markdown("""
@@ -3040,63 +3041,3 @@ if __name__ == "__main__":
     app.main()
 
 
-
-
-
-
-
-
-
-    from templates.ats_templates import render_ats_templates
-import streamlit as st
-
-# 🔥 Show templates ONLY when ATS score exists
-if "ats_score" in st.session_state:
-    st.markdown("---")
-    st.subheader("📄 Improve Your Resume (ATS)")
-    render_ats_templates(st.session_state["ats_score"])
-
-
-
-
-
-
-
-
-
-
-
-
-    # ===== FINAL ATS SCORE CAPTURE + TEMPLATE =====
-
-from templates.ats_templates import render_ats_templates
-import streamlit as st
-
-try:
-    if 'analysis_result' in locals():
-
-        job_match_score = analysis_result.get("job_match_score", 0)
-
-        if not job_match_score and "job_match" in analysis_result:
-            job_match_score = analysis_result["job_match"].get("score", 0)
-
-        if job_match_score:
-            st.session_state["ats_score"] = job_match_score
-
-except Exception as e:
-    print("ATS extraction error:", e)
-
-
-if "ats_score" in st.session_state:
-    st.markdown("---")
-    st.subheader("📄 Improve Your Resume (ATS)")
-    render_ats_templates(st.session_state["ats_score"])
-except Exception as e:
-    print("ATS extraction error:", e)
-
-
-# 🔥 SHOW TEMPLATE ONLY IF SCORE EXISTS
-if "ats_score" in st.session_state:
-    st.markdown("---")
-    st.subheader("📄 Improve Your Resume (ATS)")
-    render_ats_templates(st.session_state["ats_score"])
