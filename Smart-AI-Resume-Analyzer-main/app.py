@@ -2870,93 +2870,95 @@ def render_admin_dashboard(self):
 
     def main(self):
     """Main application entry point"""
-    self.apply_global_styles()
 
-    # Sidebar
-    with st.sidebar:
-        st_lottie(
-            self.load_lottie_url(
-                "https://assets5.lottiefiles.com/packages/lf20_xyadoh9h.json"
-            ),
-            height=200,
-            key="sidebar_animation"
-        )
+    
+        self.apply_global_styles()
 
-        st.title("Smart Resume AI")
-        st.markdown("---")
+        # Sidebar
+        with st.sidebar:
+            st_lottie(
+                self.load_lottie_url(
+                    "https://assets5.lottiefiles.com/packages/lf20_xyadoh9h.json"
+                ),
+                height=200,
+                key="sidebar_animation"
+            )
 
-        # Navigation buttons
-        for page_name in self.pages.keys():
-            if st.button(page_name, use_container_width=True):
-                cleaned_name = page_name.lower() \
-                    .replace(" ", "_") \
-                    .replace("🏠", "") \
-                    .replace("🔍", "") \
-                    .replace("📝", "") \
-                    .replace("📊", "") \
-                    .replace("🎯", "") \
-                    .replace("💬", "") \
-                    .replace("ℹ️", "") \
-                    .strip()
+            st.title("Smart Resume AI")
+            st.markdown("---")
 
-                st.session_state.page = cleaned_name
+            # Navigation buttons
+            for page_name in self.pages.keys():
+                if st.button(page_name, use_container_width=True):
+                    cleaned_name = page_name.lower() \
+                        .replace(" ", "_") \
+                        .replace("🏠", "") \
+                        .replace("🔍", "") \
+                        .replace("📝", "") \
+                        .replace("📊", "") \
+                        .replace("🎯", "") \
+                        .replace("💬", "") \
+                        .replace("ℹ️", "") \
+                        .strip()
+
+                    st.session_state.page = cleaned_name
+                    st.rerun()
+
+            # ================= ADMIN PANEL BUTTON =================
+
+            if st.button("🔐 Admin Panel", use_container_width=True):
+                st.session_state.page = "admin"
                 st.rerun()
 
-        # ================= ADMIN PANEL BUTTON =================
+            # Optional spacing
+            st.markdown("<br><br>", unsafe_allow_html=True)
+            st.markdown("---")
 
-        if st.button("🔐 Admin Panel", use_container_width=True):
-            st.session_state.page = "admin"
+            # Repository notification
+            self.show_repo_notification()
+
+        # Force home page on first load
+        if 'initial_load' not in st.session_state:
+            st.session_state.initial_load = True
+            st.session_state.page = 'home'
             st.rerun()
 
-        # Optional spacing
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("---")
+        # ================= ADMIN PAGE ROUTING =================
 
-        # Repository notification
-        self.show_repo_notification()
+        if st.session_state.get("page") == "admin":
+            if st.session_state.get("is_admin", False):
+                self.render_admin_dashboard()
+            else:
+                self.render_admin_login()
 
-    # Force home page on first load
-    if 'initial_load' not in st.session_state:
-        st.session_state.initial_load = True
-        st.session_state.page = 'home'
-        st.rerun()
+            self.add_footer()
+            return
 
-    # ================= ADMIN PAGE ROUTING =================
+        # Get current page
+        current_page = st.session_state.get('page', 'home')
 
-    if st.session_state.get("page") == "admin":
-        if st.session_state.get("is_admin", False):
-            self.render_admin_dashboard()
+        # Mapping page names
+        page_mapping = {
+            name.lower().replace(" ", "_")
+            .replace("🏠", "")
+            .replace("🔍", "")
+            .replace("📝", "")
+            .replace("📊", "")
+            .replace("🎯", "")
+            .replace("💬", "")
+            .replace("ℹ️", "")
+            .strip(): name
+            for name in self.pages.keys()
+        }
+
+        # Render page
+        if current_page in page_mapping:
+            self.pages[page_mapping[current_page]]()
         else:
-            self.render_admin_login()
+            self.render_home()
 
+        # Footer
         self.add_footer()
-        return
-
-    # Get current page
-    current_page = st.session_state.get('page', 'home')
-
-    # Mapping page names
-    page_mapping = {
-        name.lower().replace(" ", "_")
-        .replace("🏠", "")
-        .replace("🔍", "")
-        .replace("📝", "")
-        .replace("📊", "")
-        .replace("🎯", "")
-        .replace("💬", "")
-        .replace("ℹ️", "")
-        .strip(): name
-        for name in self.pages.keys()
-    }
-
-    # Render page
-    if current_page in page_mapping:
-        self.pages[page_mapping[current_page]]()
-    else:
-        self.render_home()
-
-    # Footer
-    self.add_footer()
 
 
 # ================= LOGIN SYSTEM =================
