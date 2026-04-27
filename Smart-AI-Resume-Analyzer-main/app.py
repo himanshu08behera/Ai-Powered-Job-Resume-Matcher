@@ -2869,9 +2869,8 @@ def render_admin_dashboard(self):
 
 
     def main(self):
-    """Main application entry point"""
+        """Main application entry point"""
 
-    
         self.apply_global_styles()
 
         # Sidebar
@@ -2935,7 +2934,7 @@ def render_admin_dashboard(self):
             return
 
         # Get current page
-        current_page = st.session_state.get('page', 'home')
+        current_page = st.session_state.get("page", "home")
 
         # Mapping page names
         page_mapping = {
