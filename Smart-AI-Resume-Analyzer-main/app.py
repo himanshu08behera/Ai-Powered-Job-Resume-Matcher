@@ -58,24 +58,24 @@ st.set_page_config(
 
 class ResumeApp:
     def render_admin_login(self):
-    st.title("🔐 Admin Login")
+        st.title("🔐 Admin Login")
 
-    admin_email = st.text_input("Admin Email")
-    admin_password = st.text_input("Admin Password", type="password")
+        admin_email = st.text_input("Admin Email")
+        admin_password = st.text_input("Admin Password", type="password")
 
-    if st.button("Login as Admin"):
-        if not admin_email or not admin_password:
-            st.error("Please enter both Email and Password")
-            return
+        if st.button("Login as Admin"):
+            if not admin_email or not admin_password:
+                st.error("Please enter both Email and Password")
+                return
 
-        if verify_admin(admin_email, admin_password):
-            st.session_state.is_admin = True
-            st.session_state.admin_email = admin_email
-            log_admin_action(admin_email, "Admin Login")
-            st.success("Admin Login Successful")
-            st.rerun()
-        else:
-            st.error("Access Denied! Invalid Admin Credentials")
+            if verify_admin(admin_email, admin_password):
+                st.session_state.is_admin = True
+                st.session_state.admin_email = admin_email
+                log_admin_action(admin_email, "Admin Login")
+                st.success("Admin Login Successful")
+                st.rerun()
+            else:
+                st.error("Access Denied! Invalid Admin Credentials")
 
 
 def render_admin_dashboard(self):
