@@ -78,12 +78,35 @@ class ResumeApp:
                 st.error("Access Denied! Invalid Admin Credentials")
 
 
-    def render_admin_dashboard(self):
+   def render_admin_dashboard(self):
         st.title("📊 Admin Dashboard")
 
         st.success(f"Welcome Admin: {st.session_state.admin_email}")
 
-        from config.database import get_all_resume_data
+        from config.database import (
+            get_all_resume_data,
+            get_admin_logs,
+            get_resume_stats
+        )
+
+        # ================= SUMMARY STATS =================
+
+        stats = get_resume_stats()
+
+        if stats:
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.metric("Total Users", stats.get("total_resumes", 0))
+
+            with col2:
+                st.metric("Average ATS Score", stats.get("avg_ats_score", 0))
+
+        st.markdown("---")
+
+        # ================= USER RESUME DATA =================
+
+        st.subheader("👥 All User Resume Data")
 
         all_data = get_all_resume_data()
 
@@ -109,13 +132,69 @@ class ResumeApp:
             )
 
             st.dataframe(df, use_container_width=True)
+
         else:
             st.warning("No user data found")
 
+        st.markdown("---")
+
+        # ================= RECENT ACTIVITY =================
+
+        st.subheader("📌 Recent Resume Activity")
+
+        if stats and stats.get("recent_activity"):
+            recent_df = pd.DataFrame(
+                stats["recent_activity"],
+                columns=[
+                    "Name",
+                    "Target Role",
+                    "Created At"
+                ]
+            )
+
+            st.dataframe(recent_df, use_container_width=True)
+
+        else:
+            st.info("No recent activity found")
+
+        st.markdown("---")
+
+        # ================= ADMIN LOGIN LOGS =================
+
+        st.subheader("🔐 Admin Activity Logs")
+
+        logs = get_admin_logs()
+
+        if logs:
+            logs_df = pd.DataFrame(
+                logs,
+                columns=[
+                    "Admin Email",
+                    "Action",
+                    "Timestamp"
+                ]
+            )
+
+            st.dataframe(logs_df, use_container_width=True)
+
+        else:
+            st.info("No admin logs found")
+
+        st.markdown("---")
+
+        # ================= LOGOUT =================
+
         if st.button("Logout Admin"):
-            log_admin_action(st.session_state.admin_email, "Admin Logout")
+            log_admin_action(
+                st.session_state.admin_email,
+                "Admin Logout"
+            )
+
             st.session_state.is_admin = False
             st.session_state.admin_email = ""
+            st.session_state.page = "home"
+
+            st.success("Logged out successfully")
             st.rerun()
     def __init__(self):
         """Initialize the application"""
