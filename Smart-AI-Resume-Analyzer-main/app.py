@@ -57,6 +57,66 @@ st.set_page_config(
 
 
 class ResumeApp:
+    def render_admin_login(self):
+    st.title("🔐 Admin Login")
+
+    admin_email = st.text_input("Admin Email")
+    admin_password = st.text_input("Admin Password", type="password")
+
+    if st.button("Login as Admin"):
+        if not admin_email or not admin_password:
+            st.error("Please enter both Email and Password")
+            return
+
+        if verify_admin(admin_email, admin_password):
+            st.session_state.is_admin = True
+            st.session_state.admin_email = admin_email
+            log_admin_action(admin_email, "Admin Login")
+            st.success("Admin Login Successful")
+            st.rerun()
+        else:
+            st.error("Access Denied! Invalid Admin Credentials")
+
+
+def render_admin_dashboard(self):
+    st.title("📊 Admin Dashboard")
+
+    st.success(f"Welcome Admin: {st.session_state.admin_email}")
+
+    from config.database import get_all_resume_data
+
+    all_data = get_all_resume_data()
+
+    if all_data:
+        df = pd.DataFrame(
+            all_data,
+            columns=[
+                "ID",
+                "Name",
+                "Email",
+                "Phone",
+                "LinkedIn",
+                "GitHub",
+                "Portfolio",
+                "Target Role",
+                "Category",
+                "Created At",
+                "ATS Score",
+                "Keyword Score",
+                "Format Score",
+                "Section Score"
+            ]
+        )
+
+        st.dataframe(df, use_container_width=True)
+    else:
+        st.warning("No user data found")
+
+    if st.button("Logout Admin"):
+        log_admin_action(st.session_state.admin_email, "Admin Logout")
+        st.session_state.is_admin = False
+        st.session_state.admin_email = ""
+        st.rerun()
     def __init__(self):
         """Initialize the application"""
         if 'form_data' not in st.session_state:
@@ -2809,61 +2869,94 @@ class ResumeApp:
 
 
     def main(self):
-        """Main application entry point"""
-        self.apply_global_styles()
-        
-        
-        # Sidebar
-        with st.sidebar:
-            st_lottie(self.load_lottie_url("https://assets5.lottiefiles.com/packages/lf20_xyadoh9h.json"), height=200, key="sidebar_animation")
-            st.title("Smart Resume AI")
-            st.markdown("---")
-        
+    """Main application entry point"""
+    self.apply_global_styles()
+
+    # Sidebar
+    with st.sidebar:
+        st_lottie(
+            self.load_lottie_url(
+                "https://assets5.lottiefiles.com/packages/lf20_xyadoh9h.json"
+            ),
+            height=200,
+            key="sidebar_animation"
+        )
+
+        st.title("Smart Resume AI")
+        st.markdown("---")
+
         # Navigation buttons
-            for page_name in self.pages.keys():
-                if st.button(page_name, use_container_width=True):
-                    cleaned_name = page_name.lower().replace(" ", "_").replace("🏠", "").replace("🔍", "").replace("📝", "").replace("📊", "").replace("🎯", "").replace("💬", "").replace("ℹ️", "").strip()
-                    st.session_state.page = cleaned_name
-                    st.rerun()
+        for page_name in self.pages.keys():
+            if st.button(page_name, use_container_width=True):
+                cleaned_name = page_name.lower() \
+                    .replace(" ", "_") \
+                    .replace("🏠", "") \
+                    .replace("🔍", "") \
+                    .replace("📝", "") \
+                    .replace("📊", "") \
+                    .replace("🎯", "") \
+                    .replace("💬", "") \
+                    .replace("ℹ️", "") \
+                    .strip()
+
+                st.session_state.page = cleaned_name
+                st.rerun()
+
+        # ================= ADMIN PANEL BUTTON =================
+
+        if st.button("🔐 Admin Panel", use_container_width=True):
+            st.session_state.page = "admin"
+            st.rerun()
 
         # Optional spacing
-            st.markdown("<br><br>", unsafe_allow_html=True)
-            st.markdown("---")
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("---")
 
         # Repository notification
-            self.show_repo_notification()
+        self.show_repo_notification()
 
     # Force home page on first load
-        if 'initial_load' not in st.session_state:
-            st.session_state.initial_load = True
-            st.session_state.page = 'home'
-            st.rerun()
-    
-    # Get current page
-        current_page = st.session_state.get('page', 'home')
-    
-    # Mapping page names
-        page_mapping = {
-            name.lower().replace(" ", "_")
-            .replace("🏠", "")
-            .replace("🔍", "")
-            .replace("📝", "")
-            .replace("📊", "")
-            .replace("🎯", "")
-            .replace("💬", "")
-            .replace("ℹ️", "")
-            .strip(): name
-            for name in self.pages.keys()
-        }
-    
-    # Render page
-        if current_page in page_mapping:
-            self.pages[page_mapping[current_page]]()
+    if 'initial_load' not in st.session_state:
+        st.session_state.initial_load = True
+        st.session_state.page = 'home'
+        st.rerun()
+
+    # ================= ADMIN PAGE ROUTING =================
+
+    if st.session_state.get("page") == "admin":
+        if st.session_state.get("is_admin", False):
+            self.render_admin_dashboard()
         else:
-            self.render_home()
-    
-    # Footer
+            self.render_admin_login()
+
         self.add_footer()
+        return
+
+    # Get current page
+    current_page = st.session_state.get('page', 'home')
+
+    # Mapping page names
+    page_mapping = {
+        name.lower().replace(" ", "_")
+        .replace("🏠", "")
+        .replace("🔍", "")
+        .replace("📝", "")
+        .replace("📊", "")
+        .replace("🎯", "")
+        .replace("💬", "")
+        .replace("ℹ️", "")
+        .strip(): name
+        for name in self.pages.keys()
+    }
+
+    # Render page
+    if current_page in page_mapping:
+        self.pages[page_mapping[current_page]]()
+    else:
+        self.render_home()
+
+    # Footer
+    self.add_footer()
 
 
 # ================= LOGIN SYSTEM =================
@@ -3036,8 +3129,15 @@ if not st.session_state.get("logged_in", False):
 
     st.stop()
 # ================= MAIN APP =================
+
+
+from config.database import add_admin
+
+add_admin("himanshu@gmail.com", "himanshu123")
+
 if __name__ == "__main__":
     app = ResumeApp()
     app.main()
+
 
 
