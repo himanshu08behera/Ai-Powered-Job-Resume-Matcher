@@ -78,9 +78,8 @@ class ResumeApp:
                 st.error("Access Denied! Invalid Admin Credentials")
 
 
-   def render_admin_dashboard(self):
+    def render_admin_dashboard(self):
         st.title("📊 Admin Dashboard")
-
         st.success(f"Welcome Admin: {st.session_state.admin_email}")
 
         from config.database import (
@@ -88,8 +87,6 @@ class ResumeApp:
             get_admin_logs,
             get_resume_stats
         )
-
-        # ================= SUMMARY STATS =================
 
         stats = get_resume_stats()
 
@@ -103,8 +100,6 @@ class ResumeApp:
                 st.metric("Average ATS Score", stats.get("avg_ats_score", 0))
 
         st.markdown("---")
-
-        # ================= USER RESUME DATA =================
 
         st.subheader("👥 All User Resume Data")
 
@@ -138,8 +133,6 @@ class ResumeApp:
 
         st.markdown("---")
 
-        # ================= RECENT ACTIVITY =================
-
         st.subheader("📌 Recent Resume Activity")
 
         if stats and stats.get("recent_activity"):
@@ -158,8 +151,6 @@ class ResumeApp:
             st.info("No recent activity found")
 
         st.markdown("---")
-
-        # ================= ADMIN LOGIN LOGS =================
 
         st.subheader("🔐 Admin Activity Logs")
 
@@ -182,8 +173,6 @@ class ResumeApp:
 
         st.markdown("---")
 
-        # ================= LOGOUT =================
-
         if st.button("Logout Admin"):
             log_admin_action(
                 st.session_state.admin_email,
@@ -196,6 +185,7 @@ class ResumeApp:
 
             st.success("Logged out successfully")
             st.rerun()
+            
     def __init__(self):
         """Initialize the application"""
         if 'form_data' not in st.session_state:
