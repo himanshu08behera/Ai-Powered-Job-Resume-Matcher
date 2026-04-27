@@ -78,45 +78,45 @@ class ResumeApp:
                 st.error("Access Denied! Invalid Admin Credentials")
 
 
-def render_admin_dashboard(self):
-    st.title("📊 Admin Dashboard")
+    def render_admin_dashboard(self):
+        st.title("📊 Admin Dashboard")
 
-    st.success(f"Welcome Admin: {st.session_state.admin_email}")
+        st.success(f"Welcome Admin: {st.session_state.admin_email}")
 
-    from config.database import get_all_resume_data
+        from config.database import get_all_resume_data
 
-    all_data = get_all_resume_data()
+        all_data = get_all_resume_data()
 
-    if all_data:
-        df = pd.DataFrame(
-            all_data,
-            columns=[
-                "ID",
-                "Name",
-                "Email",
-                "Phone",
-                "LinkedIn",
-                "GitHub",
-                "Portfolio",
-                "Target Role",
-                "Category",
-                "Created At",
-                "ATS Score",
-                "Keyword Score",
-                "Format Score",
-                "Section Score"
-            ]
-        )
+        if all_data:
+            df = pd.DataFrame(
+                all_data,
+                columns=[
+                    "ID",
+                    "Name",
+                    "Email",
+                    "Phone",
+                    "LinkedIn",
+                    "GitHub",
+                    "Portfolio",
+                    "Target Role",
+                    "Category",
+                    "Created At",
+                    "ATS Score",
+                    "Keyword Score",
+                    "Format Score",
+                    "Section Score"
+                ]
+            )
 
-        st.dataframe(df, use_container_width=True)
-    else:
-        st.warning("No user data found")
+            st.dataframe(df, use_container_width=True)
+        else:
+            st.warning("No user data found")
 
-    if st.button("Logout Admin"):
-        log_admin_action(st.session_state.admin_email, "Admin Logout")
-        st.session_state.is_admin = False
-        st.session_state.admin_email = ""
-        st.rerun()
+        if st.button("Logout Admin"):
+            log_admin_action(st.session_state.admin_email, "Admin Logout")
+            st.session_state.is_admin = False
+            st.session_state.admin_email = ""
+            st.rerun()
     def __init__(self):
         """Initialize the application"""
         if 'form_data' not in st.session_state:
