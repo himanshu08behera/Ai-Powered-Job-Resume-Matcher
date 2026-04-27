@@ -3203,7 +3203,7 @@ if not st.session_state.get("logged_in", False):
 
 from config.database import add_admin
 
-add_admin("himanshu@gmail.com", "himanshu123")
+add_admin("himanshubehera1129@gmail.com", "Himanshu1129")
 
 if __name__ == "__main__":
     app = ResumeApp()
