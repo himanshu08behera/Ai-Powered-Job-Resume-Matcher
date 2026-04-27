@@ -272,17 +272,25 @@ def verify_admin(email, password):
         conn.close()
 
 def add_admin(email, password):
-    """Add a new admin"""
+    """Add only one admin and remove old admin"""
     conn = get_database_connection()
     cursor = conn.cursor()
-    
+
     try:
-        cursor.execute('INSERT INTO admin (email, password) VALUES (?, ?)', (email, password))
+        cursor.execute("DELETE FROM admin")
+
+        cursor.execute(
+            "INSERT INTO admin (email, password) VALUES (?, ?)",
+            (email, password)
+        )
+
         conn.commit()
         return True
+
     except Exception as e:
         print(f"Error adding admin: {str(e)}")
         return False
+
     finally:
         conn.close()
 
