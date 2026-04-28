@@ -716,10 +716,30 @@ class ResumeApp:
         st.write("Create your professional resume")
 
         # Template selection
-        template_options = ["Modern", "Professional", "Minimal", "Creative"]
-        selected_template = st.selectbox(
-    "Select Resume Template", template_options)
-        st.success(f"🎨 Currently using: {selected_template} Template")
+        st.subheader("🎨 Choose Resume Template")
+
+        template_col1, template_col2 = st.columns(2)
+
+        with template_col1:
+            if st.button("📘 Modern Template", use_container_width=True):
+                st.session_state.selected_template = "Modern"
+
+            if st.button("📄 ATS Professional", use_container_width=True):
+                st.session_state.selected_template = "Professional"
+
+        with template_col2:
+            if st.button("✨ Minimal Template", use_container_width=True):
+                st.session_state.selected_template = "Minimal"
+
+            if st.button("🚀 Creative Template", use_container_width=True):
+                st.session_state.selected_template = "Creative"
+
+        if "selected_template" not in st.session_state:
+            st.session_state.selected_template = "Modern"
+
+        selected_template = st.session_state.selected_template
+
+        st.success(f"Currently Selected Template: {selected_template}")
 
         # Personal Information
         st.subheader("Personal Information")
@@ -1010,7 +1030,37 @@ class ResumeApp:
         st.session_state.form_data.update({
             'summary': summary
         })
+        st.subheader("👀 Live Resume Preview")
 
+        with st.container():
+            st.markdown("---")
+
+            personal = st.session_state.form_data.get("personal_info", {})
+
+            st.markdown(f"## {personal.get('full_name', 'Your Name')}")
+            st.markdown(f"📧 {personal.get('email', 'your@email.com')}")
+            st.markdown(f"📱 {personal.get('phone', 'Your Phone')}")
+            st.markdown(f"📍 {personal.get('location', 'Your Location')}")
+
+            st.markdown("---")
+
+            st.markdown("### Professional Summary")
+            st.write(st.session_state.form_data.get("summary", "Your professional summary will appear here."))
+
+            st.markdown("### Skills")
+            skills_data = st.session_state.form_data.get("skills_categories", {})
+
+            all_skills = []
+            for category in skills_data.values():
+                all_skills.extend(category)
+
+            if all_skills:
+                st.write(", ".join(all_skills))
+            else:
+                st.write("Your skills will appear here.")
+
+            st.markdown("### Selected Template")
+            st.success(selected_template)
         # Generate Resume button
         if st.button("Generate Resume 📄", type="primary"):
             print("Validating form data...")
