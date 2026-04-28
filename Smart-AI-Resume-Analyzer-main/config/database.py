@@ -272,19 +272,25 @@ def verify_admin(email, password):
         conn.close()
 
 def add_admin(email, password):
-    """Add only one admin and remove old admin"""
+    """Add admin only if not already exists"""
     conn = get_database_connection()
     cursor = conn.cursor()
 
     try:
-        cursor.execute("DELETE FROM admin")
-
         cursor.execute(
-            "INSERT INTO admin (email, password) VALUES (?, ?)",
-            (email, password)
+            "SELECT * FROM admin WHERE email = ?",
+            (email,)
         )
 
-        conn.commit()
+        existing_admin = cursor.fetchone()
+
+        if not existing_admin:
+            cursor.execute(
+                "INSERT INTO admin (email, password) VALUES (?, ?)",
+                (email, password)
+            )
+            conn.commit()
+
         return True
 
     except Exception as e:
