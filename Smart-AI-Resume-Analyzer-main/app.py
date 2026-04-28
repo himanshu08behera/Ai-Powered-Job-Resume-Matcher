@@ -3202,7 +3202,7 @@ if not st.session_state.get("logged_in", False):
 
 
 from config.database import add_admin
-
+add_admin("ashishranjansahoo96@gmail.com", "Himanshu1122")
 
 
 if __name__ == "__main__":
